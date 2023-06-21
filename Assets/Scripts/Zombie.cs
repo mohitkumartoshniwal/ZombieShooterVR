@@ -25,6 +25,9 @@ public class Zombie : MonoBehaviour
     [SerializeField]
     float walkingPointRadius = 2;
 
+    [Header("Zombie Animation")]
+    public Animator anim;
+
     [Header("Zombie Mood/Stages")]
     [SerializeField]
     float visionRadius;
@@ -77,7 +80,22 @@ public class Zombie : MonoBehaviour
 
     private void PursuePlayer()
     {
-        zombieAgent.SetDestination(playerBody.position);
+        if(zombieAgent.SetDestination(playerBody.position))
+        {
+            anim.SetBool("Running", true);
+            anim.SetBool("Walking", false);
+            // are the below rqeuired??
+            anim.SetBool("Attacking", false);
+            anim.SetBool("Died", false);
+
+        }
+        else
+        {
+            anim.SetBool("Running", false);
+            anim.SetBool("Walking", false);
+            anim.SetBool("Attacking", false);
+            anim.SetBool("Died", true);
+        }
     }
 
     private void AttackPlayer()
@@ -89,7 +107,10 @@ public class Zombie : MonoBehaviour
             RaycastHit hitInfo;
             if(Physics.Raycast(AttackingRayCastArea.transform.position, AttackingRayCastArea.transform.forward,out hitInfo, attackingRadius))
             {
-
+                anim.SetBool("Running", false);
+                anim.SetBool("Walking", false);
+                anim.SetBool("Attacking", true);
+                anim.SetBool("Died", false);
 
             }
             isPreviouslyAttacked = true;
